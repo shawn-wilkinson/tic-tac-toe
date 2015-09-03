@@ -1,13 +1,16 @@
 class Game
   def initialize
     @board = ["0", "1", "2", "3", "4", "5", "6", "7", "8"]
-    @player1_piece = "O"
-    @player2_piece = "X"
+    players = []
+    @player1_piece = nil
+    @player2_piece = nil
 
   end
 
   def start_game
+    welcome_message
     puts "Welcome to my Tic Tac Toe game"
+    set_up_game
     display_board
     puts "Please select your spot."
     until game_is_over(@board) || tie(@board)
@@ -20,9 +23,37 @@ class Game
     puts "Game over"
   end
 
-    def display_board
-      puts "|_#{@board[0]}_|_#{@board[1]}_|_#{@board[2]}_|\n|_#{@board[3]}_|_#{@board[4]}_|_#{@board[5]}_|\n|_#{@board[6]}_|_#{@board[7]}_|_#{@board[8]}_|\n"
+  def set_up_game
+    determine_players
+    select_pieces
+  end
+
+  def determine_players
+    #allow player to determine human / computer opponent
+  end
+
+  def select_pieces
+    puts "Select a Marker for Player 1"
+    @player1_piece = get_unique_piece
+    puts "Select a Marker for Player 2"
+    @player2_piece = get_unique_piece
+  end
+
+  def get_unique_piece
+    valid_piece_selection = false
+    until valid_piece_selection
+      input = gets.chomp
+      if (input.length == 1) && (input != @player1_piece) && (input != @player2_piece)
+        return input
+      else
+        puts "Please make another selection. Must be 1 character long and unique."
+      end
     end
+  end
+
+  def display_board
+    puts "|_#{@board[0]}_|_#{@board[1]}_|_#{@board[2]}_|\n|_#{@board[3]}_|_#{@board[4]}_|_#{@board[5]}_|\n|_#{@board[6]}_|_#{@board[7]}_|_#{@board[8]}_|\n"
+  end
 
   def get_human_spot
     spot = nil
@@ -44,7 +75,7 @@ class Game
         @board[spot] = @player2_piece
       else
         spot = get_best_move(@board, @player2_piece)
-        if @board[spot] != "0" && @board[spot] != @player2_piece
+        if @board[spot] != @player1_piece && @board[spot] != @player2_piece
           @board[spot] = @player2_piece
         else
           spot = nil
