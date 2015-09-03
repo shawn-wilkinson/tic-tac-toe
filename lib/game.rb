@@ -1,4 +1,5 @@
 require_relative "player.rb"
+require_relative "view.rb"
 
 class Game
   def initialize
@@ -7,21 +8,21 @@ class Game
     @player1.name = "Player 1"
     @player2 = Player.new
     @player2.name = "Player 2"
+    @view = View
 
   end
 
   def start_game
-
-    puts "Welcome to my Tic Tac Toe game"
+    @view.welcome_message
     set_up_game
-    display_board
+    @view.display_board(@board)
     puts "Please select your spot."
     until game_is_over(@board) || tie(@board)
       get_human_spot
       if !game_is_over(@board) && !tie(@board)
         eval_board
       end
-      display_board
+      @view.display_board(@board)
     end
     puts "Game over"
   end
@@ -36,9 +37,9 @@ class Game
   end
 
   def select_markers
-    puts "Select a Marker for #{@player1.name}"
+    @view.select_marker_message(@player1.name)
     @player1.marker = get_unique_marker
-    puts "Select a Marker for #{@player2.name}"
+    @view.select_marker_message(@player2.name)
     @player2.marker = get_unique_marker
   end
 
@@ -49,13 +50,9 @@ class Game
       if (input.length == 1) && (input != @player1.marker) && (input != @player2.marker)
         return input
       else
-        puts "Please make another selection. Marker must be 1 character long and unique."
+        @view.invalid_marker_selection_message
       end
     end
-  end
-
-  def display_board
-    puts "|_#{@board[0]}_|_#{@board[1]}_|_#{@board[2]}_|\n|_#{@board[3]}_|_#{@board[4]}_|_#{@board[5]}_|\n|_#{@board[6]}_|_#{@board[7]}_|_#{@board[8]}_|\n"
   end
 
   def get_human_spot
