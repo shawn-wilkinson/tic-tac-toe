@@ -16,9 +16,8 @@ class Game
     @view.welcome_message
     set_up_game
     @view.display_board(@board)
-    puts "Please select your spot."
     until game_is_over(@board) || tie(@board)
-      get_human_spot
+      get_human_spot(@player1.name)
       if !game_is_over(@board) && !tie(@board)
         eval_board
       end
@@ -55,16 +54,23 @@ class Game
     end
   end
 
-  def get_human_spot
-    spot = nil
-    until spot
-      spot = gets.chomp.to_i
-      if @board[spot] != @player1.marker && @board[spot] != @player2.marker
-        @board[spot] = @player1.marker
+
+  def get_human_spot(name)
+    @view.pick_spot_message(name,available_choices)
+    valid_selection = false
+    while valid_selection == false
+      selection = gets.chomp
+      if available_choices.include?(selection)
+        @board[selection.to_i] = @player1.marker
+        valid_selection = true
       else
-        spot = nil
+        @view.pick_spot_message(name,available_choices)
       end
     end
+  end
+
+  def available_choices
+    @board.dup.delete_if{|spot| spot == @player1.marker || spot == @player2.marker}
   end
 
   def eval_board

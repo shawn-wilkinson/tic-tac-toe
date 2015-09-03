@@ -17,4 +17,9 @@ class View
     puts "Please make another selection. Marker must be 1 character long and unique."
   end
 
+  def self.pick_spot_message(name,available_choices)
+    puts "#{name}, pick a spot."
+    puts "Choose from: #{available_choices.join(',')}"
+  end
+
 end
