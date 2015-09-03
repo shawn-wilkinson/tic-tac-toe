@@ -1,14 +1,17 @@
+require_relative "player.rb"
+
 class Game
   def initialize
     @board = ["0", "1", "2", "3", "4", "5", "6", "7", "8"]
-    players = []
-    @player1_piece = nil
-    @player2_piece = nil
+    @player1 = Player.new
+    @player1.name = "Player 1"
+    @player2 = Player.new
+    @player2.name = "Player 2"
 
   end
 
   def start_game
-    welcome_message
+
     puts "Welcome to my Tic Tac Toe game"
     set_up_game
     display_board
@@ -25,28 +28,28 @@ class Game
 
   def set_up_game
     determine_players
-    select_pieces
+    select_markers
   end
 
   def determine_players
     #allow player to determine human / computer opponent
   end
 
-  def select_pieces
-    puts "Select a Marker for Player 1"
-    @player1_piece = get_unique_piece
-    puts "Select a Marker for Player 2"
-    @player2_piece = get_unique_piece
+  def select_markers
+    puts "Select a Marker for #{@player1.name}"
+    @player1.marker = get_unique_marker
+    puts "Select a Marker for #{@player2.name}"
+    @player2.marker = get_unique_marker
   end
 
-  def get_unique_piece
-    valid_piece_selection = false
-    until valid_piece_selection
+  def get_unique_marker
+    #find way to keep users from selecting a NUMBER as their marker
+    while true
       input = gets.chomp
-      if (input.length == 1) && (input != @player1_piece) && (input != @player2_piece)
+      if (input.length == 1) && (input != @player1.marker) && (input != @player2.marker)
         return input
       else
-        puts "Please make another selection. Must be 1 character long and unique."
+        puts "Please make another selection. Marker must be 1 character long and unique."
       end
     end
   end
@@ -59,8 +62,8 @@ class Game
     spot = nil
     until spot
       spot = gets.chomp.to_i
-      if @board[spot] != @player1_piece && @board[spot] != @player2_piece
-        @board[spot] = @player1_piece
+      if @board[spot] != @player1.marker && @board[spot] != @player2.marker
+        @board[spot] = @player1.marker
       else
         spot = nil
       end
@@ -72,11 +75,11 @@ class Game
     until spot
       if @board[4] == "4"
         spot = 4
-        @board[spot] = @player2_piece
+        @board[spot] = @player2.marker
       else
-        spot = get_best_move(@board, @player2_piece)
-        if @board[spot] != @player1_piece && @board[spot] != @player2_piece
-          @board[spot] = @player2_piece
+        spot = get_best_move(@board, @player2.marker)
+        if @board[spot] != @player1.marker && @board[spot] != @player2.marker
+          @board[spot] = @player2.marker
         else
           spot = nil
         end
@@ -88,18 +91,18 @@ class Game
     available_spaces = []
     best_move = nil
     board.each do |s|
-      if s != @player1_piece && s != @player2_piece
+      if s != @player1.marker && s != @player2.marker
         available_spaces << s
       end
     end
     available_spaces.each do |as|
-      board[as.to_i] = @player2_piece
+      board[as.to_i] = @player2.marker
       if game_is_over(board)
         best_move = as.to_i
         board[as.to_i] = as
         return best_move
       else
-        board[as.to_i] = @player1_piece
+        board[as.to_i] = @player1.marker
         if game_is_over(board)
           best_move = as.to_i
           board[as.to_i] = as
@@ -130,10 +133,11 @@ class Game
   end
 
   def tie(board)
-    board.all? { |spot| spot == @player1_piece || spot == @player2_piece }
+    board.all? { |spot| spot == @player1.marker || spot == @player2.marker }
   end
 
 end
+
 
 game = Game.new
 game.start_game
