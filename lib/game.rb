@@ -5,11 +5,8 @@ class Game
   def initialize
     @board = ["0", "1", "2", "3", "4", "5", "6", "7", "8"]
     @player1 = Player.new
-    @player1.name = "Player 1"
     @player2 = Player.new
-    @player2.name = "Player 2"
     @view = View
-
   end
 
   def start_game
@@ -28,11 +25,17 @@ class Game
 
   def set_up_game
     determine_players
+    enter_player_names
     select_markers
   end
 
   def determine_players
     #allow player to determine human / computer opponent
+  end
+
+  def enter_player_names
+    @player1.name = @view.get_player_name
+    @player2.name = @view.get_player_name
   end
 
   def select_markers
@@ -43,10 +46,10 @@ class Game
   end
 
   def get_unique_marker
-    #find way to keep users from selecting a NUMBER as their marker
+    digits = ["0","1","2","3","4","5","6","7","8","9"]
     while true
       input = gets.chomp
-      if (input.length == 1) && (input != @player1.marker) && (input != @player2.marker)
+      if (input.length == 1) && (input != @player1.marker) && (input != @player2.marker) && (!digits.include?(input))
         return input
       else
         @view.invalid_marker_selection_message
