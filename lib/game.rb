@@ -5,20 +5,16 @@ class Game
   def initialize
     @board = ["0", "1", "2", "3", "4", "5", "6", "7", "8"]
     @player1 = Player.new
-    @player1.name = "Player 1"
     @player2 = Player.new
-    @player2.name = "Player 2"
     @view = View
-
   end
 
   def start_game
     @view.welcome_message
     set_up_game
     @view.display_board(@board)
-    puts "Please select your spot."
     until game_is_over(@board) || tie(@board)
-      get_human_spot
+      get_human_spot(@player1.name)
       if !game_is_over(@board) && !tie(@board)
         eval_board
       end
@@ -28,26 +24,31 @@ class Game
   end
 
   def set_up_game
-    determine_players
+    determine_player_types
+    enter_player_names
     select_markers
   end
 
-  def determine_players
+  def determine_player_types
     #allow player to determine human / computer opponent
   end
 
-  def select_markers
-    @view.select_marker_message(@player1.name)
-    @player1.marker = get_unique_marker
-    @view.select_marker_message(@player2.name)
-    @player2.marker = get_unique_marker
+  def enter_player_names
+    @player1.name = @view.get_player_name
+    @player2.name = @view.get_player_name
   end
 
-  def get_unique_marker
-    #find way to keep users from selecting a NUMBER as their marker
+  def select_markers
+    @player1.marker = get_unique_marker(@player1.name)
+    @player2.marker = get_unique_marker(@player2.name)
+  end
+
+  def get_unique_marker(name)
+    digits = ["0","1","2","3","4","5","6","7","8","9"]
+    @view.select_marker_message(name)
     while true
       input = gets.chomp
-      if (input.length == 1) && (input != @player1.marker) && (input != @player2.marker)
+      if (input.length == 1) && (input != @player1.marker) && (input != @player2.marker) && (!digits.include?(input))
         return input
       else
         @view.invalid_marker_selection_message
@@ -55,16 +56,23 @@ class Game
     end
   end
 
-  def get_human_spot
-    spot = nil
-    until spot
-      spot = gets.chomp.to_i
-      if @board[spot] != @player1.marker && @board[spot] != @player2.marker
-        @board[spot] = @player1.marker
+
+  def get_human_spot(name)
+    @view.pick_spot_message(name,available_choices)
+    valid_selection = false
+    while valid_selection == false
+      selection = gets.chomp
+      if available_choices.include?(selection)
+        @board[selection.to_i] = @player1.marker
+        valid_selection = true
       else
-        spot = nil
+        @view.pick_spot_message(name,available_choices)
       end
     end
+  end
+
+  def available_choices
+    @board.dup.delete_if{|spot| spot == @player1.marker || spot == @player2.marker}
   end
 
   def eval_board
