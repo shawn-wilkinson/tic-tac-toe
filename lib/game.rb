@@ -24,12 +24,12 @@ class Game
   end
 
   def set_up_game
-    determine_players
+    determine_player_types
     enter_player_names
     select_markers
   end
 
-  def determine_players
+  def determine_player_types
     #allow player to determine human / computer opponent
   end
 
@@ -39,14 +39,13 @@ class Game
   end
 
   def select_markers
-    @view.select_marker_message(@player1.name)
-    @player1.marker = get_unique_marker
-    @view.select_marker_message(@player2.name)
-    @player2.marker = get_unique_marker
+    @player1.marker = get_unique_marker(@player1.name)
+    @player2.marker = get_unique_marker(@player2.name)
   end
 
-  def get_unique_marker
+  def get_unique_marker(name)
     digits = ["0","1","2","3","4","5","6","7","8","9"]
+    @view.select_marker_message(name)
     while true
       input = gets.chomp
       if (input.length == 1) && (input != @player1.marker) && (input != @player2.marker) && (!digits.include?(input))
