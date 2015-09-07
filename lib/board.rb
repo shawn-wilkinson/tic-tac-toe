@@ -8,7 +8,7 @@ def initialize
 end
 
 def available_spaces
-  @spaces.dup.delete_if{|spot| !@orig_spaces.include?(spot)}
+  @spaces.dup.delete_if{|space| !@orig_spaces.include?(space)}
 end
 
 def return_random_corner
@@ -31,7 +31,7 @@ def game_is_over?
 end
 
 def tie?
-  @spaces.all? { |space| space == @player1.marker || space == @player2.marker }
+  @spaces.all? { |space| !@orig_spaces.include?(space) }
 end
 
 def winning_move?(input_hash)

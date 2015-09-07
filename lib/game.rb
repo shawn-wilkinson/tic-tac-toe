@@ -50,7 +50,7 @@ class Game
   end
 
   def play_game
-    until game_is_over(@board.spaces) || tie(@board.spaces)
+    until @board.game_is_over? || @board.tie?
       play_round
     end
     @view.display_board(@board.spaces)
@@ -60,7 +60,7 @@ class Game
   def play_round
     @view.display_board(@board.spaces)
     get_human_spot(@player1.name)
-    if !game_is_over(@board.spaces) && !tie(@board.spaces)
+    if !@board.game_is_over? && !@board.tie?
       # eval_board
       computer_spot_choice = @player2.determine_computer_move({opponent_marker: @player1.marker,board:@board})
       set_computer_spot(computer_spot_choice,@player2.marker)
@@ -84,72 +84,6 @@ class Game
         @view.pick_spot_message(name,choices)
       end
     end
-  end
-
-  def eval_board
-    spot = nil
-    until spot
-      if @board.spaces[4] == "4"
-        spot = 4
-        @board.mark_space({spot_number:4,player_marker:@player2.marker})
-      else
-        spot = get_best_move(@board, @player2.marker)
-        if @board.spaces[spot] != @player1.marker && @board.spaces[spot] != @player2.marker
-          @board.mark_space({spot_number:spot,player_marker:@player2.marker})
-        else
-          spot = nil
-        end
-      end
-    end
-  end
-
-  def get_best_move(board, next_player, depth = 0, best_score = {})
-    available_spaces = []
-    best_move = nil
-    @board.spaces.each do |s|
-      if s != @player1.marker && s != @player2.marker
-        available_spaces << s
-      end
-    end
-    available_spaces.each do |space|
-      @board.spaces[space.to_i] = @player2.marker
-        if game_is_over(@board.spaces)
-          best_move = as.to_i
-          @board.spaces[as.to_i] = as
-          return best_move
-        else
-          @board.spaces[as.to_i] = @player1.marker
-          if game_is_over(@board.spaces)
-            best_move = as.to_i
-            @board.spaces[as.to_i] = as
-            return best_move
-          else
-            @board.spaces[as.to_i] = as
-          end
-        end
-      end
-    if best_move
-      return best_move
-    else
-      n = rand(0..available_spaces.count)
-      return available_spaces[n].to_i
-    end
-  end
-
-  def game_is_over(board)
-
-    [board[0], board[1], board[2]].uniq.length == 1 ||
-    [board[3], board[4], board[5]].uniq.length == 1 ||
-    [board[6], board[7], board[8]].uniq.length == 1 ||
-    [board[0], board[3], board[6]].uniq.length == 1 ||
-    [board[1], board[4], board[7]].uniq.length == 1 ||
-    [board[2], board[5], board[8]].uniq.length == 1 ||
-    [board[0], board[4], board[8]].uniq.length == 1 ||
-    [board[2], board[4], board[6]].uniq.length == 1
-  end
-
-  def tie(board)
-    board.all? { |spot| spot == @player1.marker || spot == @player2.marker }
   end
 
 end
