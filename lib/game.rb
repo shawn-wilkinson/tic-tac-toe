@@ -61,14 +61,14 @@ class Game
     @view.display_board(@board.spaces)
     get_human_spot(@player1.name)
     if !game_is_over(@board.spaces) && !tie(@board.spaces)
-      eval_board
-      # computer_spot_choice = @player2.determine_move({opponent_marker: @player1.marker,board:@board})
-      # set_computer_spot(computer_spot_choice,@player2.marker)
+      # eval_board
+      computer_spot_choice = @player2.determine_computer_move({opponent_marker: @player1.marker,board:@board})
+      set_computer_spot(computer_spot_choice,@player2.marker)
     end
   end
 
-  def set_computer_spot(marker, spot_choice)
-    @board[spot_choice] = marker
+  def set_computer_spot(spot_choice, marker)
+    @board.mark_space({spot_number:spot_choice,player_marker:marker})
   end
 
   def get_human_spot(name)
@@ -84,10 +84,6 @@ class Game
         @view.pick_spot_message(name,choices)
       end
     end
-  end
-
-  def available_choices
-    @board.dup.delete_if{|spot| spot == @player1.marker || spot == @player2.marker}
   end
 
   def eval_board
@@ -115,23 +111,23 @@ class Game
         available_spaces << s
       end
     end
-    available_spaces.each do |as|
-      @board.spaces[as.to_i] = @player2.marker
-      if game_is_over(@board.spaces)
-        best_move = as.to_i
-        @board.spaces[as.to_i] = as
-        return best_move
-      else
-        @board.spaces[as.to_i] = @player1.marker
+    available_spaces.each do |space|
+      @board.spaces[space.to_i] = @player2.marker
         if game_is_over(@board.spaces)
           best_move = as.to_i
           @board.spaces[as.to_i] = as
           return best_move
         else
-          @board.spaces[as.to_i] = as
+          @board.spaces[as.to_i] = @player1.marker
+          if game_is_over(@board.spaces)
+            best_move = as.to_i
+            @board.spaces[as.to_i] = as
+            return best_move
+          else
+            @board.spaces[as.to_i] = as
+          end
         end
       end
-    end
     if best_move
       return best_move
     else
