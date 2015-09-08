@@ -11,15 +11,17 @@ class Player
     board = input_hash[:board]
     if board.available_spaces.include? ("4")
       return 4
-    elsif identify_crucial_space(board,opponent_marker)
-      return identify_crucial_space(board,opponent_marker)
+    elsif identify_crucial_space({board:board, opponent_marker: opponent_marker})
+      return identify_crucial_space({board:board, opponent_marker: opponent_marker})
     else
       return select_space(board)
     end
   end
 
-  def identify_crucial_space(board,opponent_marker)
+  def identify_crucial_space(input_hash)
     result = false
+    board = input_hash[:board]
+    opponent_marker = input_hash[:opponent_marker]
     #first, determine if any move could win current player the game
     board.available_spaces.each do |space|
       if board.winning_move?({spot_number:space,player_marker:@marker})

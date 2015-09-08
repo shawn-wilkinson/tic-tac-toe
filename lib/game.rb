@@ -8,6 +8,7 @@ class Game
     @player1 = Player.new
     @player2 = Player.new
     @view = View
+    @most_recent_computer_move = nil
   end
 
   def start_game
@@ -28,7 +29,7 @@ class Game
 
   def enter_player_names
     @player1.name = @view.get_player_name
-    @player2.name = @view.get_player_name
+    @player2.name = @view.get_computer_name
   end
 
   def select_markers
@@ -50,30 +51,33 @@ class Game
   end
 
   def play_game
-    until game_is_over(@board.spaces) || tie(@board.spaces)
+    until @board.game_is_over? || @board.tie?
       play_round
     end
-    @view.display_board(@board.spaces)
-    puts "Game over"
+    evaluate_game_result
   end
 
   def play_round
+    @view.clear_screen
     @view.display_board(@board.spaces)
+    if @most_recent_computer_move
+      @view.computer_move_message({computer_choice: @most_recent_computer_move,computer_name: @player2.name})
+    end
     get_human_spot(@player1.name)
-    if !game_is_over(@board.spaces) && !tie(@board.spaces)
-      # eval_board
+    if !@board.game_is_over? && !@board.tie?
       computer_spot_choice = @player2.determine_computer_move({opponent_marker: @player1.marker,board:@board})
-      set_computer_spot(computer_spot_choice,@player2.marker)
+      @most_recent_computer_move = computer_spot_choice
+      set_computer_spot({spot_number:computer_spot_choice,player_marker:@player2.marker})
     end
   end
 
-  def set_computer_spot(spot_choice, marker)
-    @board.mark_space({spot_number:spot_choice,player_marker:marker})
+  def set_computer_spot(input_hash)
+    @board.mark_space({spot_number:input_hash[:spot_number], player_marker:input_hash[:player_marker]})
   end
 
   def get_human_spot(name)
     choices = @board.available_spaces
-    @view.pick_spot_message(name,choices)
+    @view.pick_spot_message({player_name:name, choices:choices})
     valid_selection = false
     while valid_selection == false
       selection = gets.chomp
@@ -86,70 +90,16 @@ class Game
     end
   end
 
-  def eval_board
-    spot = nil
-    until spot
-      if @board.spaces[4] == "4"
-        spot = 4
-        @board.mark_space({spot_number:4,player_marker:@player2.marker})
-      else
-        spot = get_best_move(@board, @player2.marker)
-        if @board.spaces[spot] != @player1.marker && @board.spaces[spot] != @player2.marker
-          @board.mark_space({spot_number:spot,player_marker:@player2.marker})
-        else
-          spot = nil
-        end
-      end
-    end
-  end
-
-  def get_best_move(board, next_player, depth = 0, best_score = {})
-    available_spaces = []
-    best_move = nil
-    @board.spaces.each do |s|
-      if s != @player1.marker && s != @player2.marker
-        available_spaces << s
-      end
-    end
-    available_spaces.each do |space|
-      @board.spaces[space.to_i] = @player2.marker
-        if game_is_over(@board.spaces)
-          best_move = as.to_i
-          @board.spaces[as.to_i] = as
-          return best_move
-        else
-          @board.spaces[as.to_i] = @player1.marker
-          if game_is_over(@board.spaces)
-            best_move = as.to_i
-            @board.spaces[as.to_i] = as
-            return best_move
-          else
-            @board.spaces[as.to_i] = as
-          end
-        end
-      end
-    if best_move
-      return best_move
+  def evaluate_game_result
+    @view.clear_screen
+    if @board.won_game?(@player1.marker)
+      @view.won_game(@player1.name)
+    elsif @board.won_game?(@player2.marker)
+      @view.won_game(@player2.name)
     else
-      n = rand(0..available_spaces.count)
-      return available_spaces[n].to_i
+      @view.tie_game
     end
-  end
-
-  def game_is_over(board)
-
-    [board[0], board[1], board[2]].uniq.length == 1 ||
-    [board[3], board[4], board[5]].uniq.length == 1 ||
-    [board[6], board[7], board[8]].uniq.length == 1 ||
-    [board[0], board[3], board[6]].uniq.length == 1 ||
-    [board[1], board[4], board[7]].uniq.length == 1 ||
-    [board[2], board[5], board[8]].uniq.length == 1 ||
-    [board[0], board[4], board[8]].uniq.length == 1 ||
-    [board[2], board[4], board[6]].uniq.length == 1
-  end
-
-  def tie(board)
-    board.all? { |spot| spot == @player1.marker || spot == @player2.marker }
+    @view.display_board(@board.spaces)
   end
 
 end
