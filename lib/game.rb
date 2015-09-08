@@ -2,6 +2,7 @@ require_relative "player.rb"
 require_relative "view.rb"
 require_relative "board.rb"
 
+
 class Game
   def initialize
     @board = Board.new
@@ -18,13 +19,8 @@ class Game
   end
 
   def set_up_game
-    determine_player_types
     enter_player_names
     select_markers
-  end
-
-  def determine_player_types
-    #allow player to determine human / computer opponent
   end
 
   def enter_player_names
@@ -85,7 +81,7 @@ class Game
         @board.mark_space({spot_number:selection,player_marker: @player1.marker})
         valid_selection = true
       else
-        @view.pick_spot_message(name,choices)
+        @view.pick_spot_message({player_name:name, choices:choices})
       end
     end
   end
@@ -105,5 +101,5 @@ class Game
 end
 
 #NOTE: the below code must be commented out in order to properly run tests
-# game = Game.new
-# game.start_game
+game = Game.new
+game.start_game
