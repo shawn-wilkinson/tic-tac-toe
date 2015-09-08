@@ -1,8 +1,18 @@
 class View
 
   def self.welcome_message
-    puts "Welcome to My Tic-Tac-Toe Game!"
-    puts "Have Fun!"
+      puts "
+    _______ _        _______           _______
+   |__   __(_)      |__   __|         |__   __|
+      | |   _  ___     | | __ _  ___     | | ___   ___
+      | |  | |/ __|    | |/ _` |/ __|    | |/ _ \\ / _ \\
+      | |  | | (__     | | (_| | (__     | | (_) |  __/
+      |_|  |_|\\___|    |_|\\__,_|\\___|    |_|\\___/ \\___|
+      "
+  end
+
+  def self.clear_screen
+    print "\e[2J \e[H"
   end
 
   def self.select_marker_message(name)
@@ -16,6 +26,12 @@ class View
     return name
   end
 
+  def self.get_computer_name
+    puts "Enter the name of your computer opponent:"
+    name = gets.chomp
+    return name.concat(" (Computer)")
+  end
+
   def self.display_board(board)
       puts "|_#{board[0]}_|_#{board[1]}_|_#{board[2]}_|\n|_#{board[3]}_|_#{board[4]}_|_#{board[5]}_|\n|_#{board[6]}_|_#{board[7]}_|_#{board[8]}_|\n"
   end
@@ -25,9 +41,21 @@ class View
     puts "Please make another selection."
   end
 
-  def self.pick_spot_message(name,available_choices)
-    puts "#{name}, pick a spot."
-    puts "Choose from: #{available_choices.join(',')}"
+  def self.pick_spot_message(input_hash)
+    puts "#{input_hash[:player_name]}, pick a spot."
+    puts "Choose from: #{input_hash[:choices].join(',')}"
+  end
+
+  def self.computer_move_message(input_hash)
+    puts "#{input_hash[:computer_name]} chose spot #{input_hash[:computer_choice]}"
+  end
+
+  def self.tie_game
+    puts "It's a tie!"
+  end
+
+  def self.won_game(name)
+    puts "#{name.upcase} WON!"
   end
 
 end

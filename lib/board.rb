@@ -30,6 +30,17 @@ def game_is_over?
   [@spaces[2], @spaces[4], @spaces[6]].uniq.length == 1
 end
 
+def won_game?(player_marker)
+  [@spaces[0], @spaces[1], @spaces[2]].uniq == [player_marker] ||
+  [@spaces[3], @spaces[4], @spaces[5]].uniq == [player_marker] ||
+  [@spaces[6], @spaces[7], @spaces[8]].uniq == [player_marker] ||
+  [@spaces[0], @spaces[3], @spaces[6]].uniq == [player_marker] ||
+  [@spaces[1], @spaces[4], @spaces[7]].uniq == [player_marker] ||
+  [@spaces[2], @spaces[5], @spaces[8]].uniq == [player_marker] ||
+  [@spaces[0], @spaces[4], @spaces[8]].uniq == [player_marker] ||
+  [@spaces[2], @spaces[4], @spaces[6]].uniq == [player_marker]
+end
+
 def tie?
   @spaces.all? { |space| !@orig_spaces.include?(space) }
 end
