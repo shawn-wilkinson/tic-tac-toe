@@ -104,6 +104,6 @@ class Game
 
 end
 
-
-game = Game.new
-game.start_game
+#NOTE: the below code must be commented out in order to properly run tests
+# game = Game.new
+# game.start_game
