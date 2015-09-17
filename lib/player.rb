@@ -9,12 +9,25 @@ class Player
   def determine_computer_move(input_hash)
     opponent_marker = input_hash[:opponent_marker]
     board = input_hash[:board]
-    if board.available_spaces.include? ("4")
-      return 4
+    if board.available_spaces.length > 7
+      return determine_first_move({board:board, opponent_marker: opponent_marker})
     elsif identify_crucial_space({board:board, opponent_marker: opponent_marker})
       return identify_crucial_space({board:board, opponent_marker: opponent_marker})
     else
       return select_space(board)
+    end
+  end
+
+  def determine_first_move(input_hash)
+    board = input_hash[:board]
+    spaces = board.spaces
+    opponent_marker = input_hash[:opponent_marker]
+    if [spaces[0],spaces[2],spaces[6],spaces[8]].include?(opponent_marker)
+      return 1
+    elsif spaces[4] == opponent_marker
+      return board.return_random_corner
+    else
+      return 4
     end
   end
 
