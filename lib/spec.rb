@@ -1,3 +1,4 @@
+$TEST_ENVIRONMENT = true
 require_relative "game.rb"
 
 #NOTE: Runner code at the bottom of 'game.rb' must be commented out in order to properly run below tests

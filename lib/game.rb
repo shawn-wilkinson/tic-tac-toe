@@ -100,6 +100,7 @@ class Game
 
 end
 
-#NOTE: the below code must be commented out in order to properly run tests
-game = Game.new
-game.start_game
+unless $TEST_ENVIRONMENT
+  game = Game.new
+  game.start_game
+end
