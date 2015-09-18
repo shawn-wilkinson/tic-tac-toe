@@ -27,7 +27,7 @@ class View
   end
 
   def self.get_computer_name
-    puts "Enter the name of your computer opponent:"
+    puts "Enter Computer Player Name:"
     name = gets.chomp
     return name.concat(" (Computer)")
   end
@@ -45,8 +45,20 @@ class View
   end
 
   def self.invalid_game_type_message
-    puts "Invalid Entry. Please enter '1' '2' or '3'."
+    puts "Invalid Entry. Please enter '1', '2' or '3'."
   end
+
+  def self.who_plays_first_message(name1,name2)
+    puts "Who should play first?"
+    puts "1. #{name1}"
+    puts "2. #{name2}"
+    puts "Please enter 1 or 2 as your choice"
+  end
+
+  def self.invalid_first_player_message
+    puts "Invalid Entry. Please enter '1' or '2'."
+  end
+
 
    def self.display_board(board)
       puts "|_#{board[0]}_|_#{board[1]}_|_#{board[2]}_|\n|_#{board[3]}_|_#{board[4]}_|_#{board[5]}_|\n|_#{board[6]}_|_#{board[7]}_|_#{board[8]}_|\n"
@@ -63,7 +75,7 @@ class View
   end
 
   def self.computer_move_message(input_hash)
-    puts "#{input_hash[:computer_name]} chose spot #{input_hash[:computer_choice]}"
+    puts "#{input_hash[:name]} chose spot #{input_hash[:spot]}"
   end
 
   def self.tie_game

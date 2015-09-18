@@ -45,7 +45,7 @@ class Player
     else
       if (spaces[0] == opponent_marker && spaces[8] == opponent_marker) || (spaces[2] == opponent_marker && spaces[6] == opponent_marker)
         return 1
-      elsif spaces[8] == '4'
+      elsif spaces[4] == '4'
         return 4
       else
         return board.return_random_corner
@@ -75,7 +75,11 @@ class Player
   end
 
   def select_space(board)
-    board.return_random_corner
+    if board.return_random_corner
+      return board.return_random_corner
+    else
+      return  board.available_spaces.sample
+    end
   end
 
 end
