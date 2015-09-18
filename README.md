@@ -22,3 +22,7 @@ During game play you will be provided with an image of the updated board, a mess
 
 ###Have Fun!
 
+#####Interested in running tests?
+Type the following in the command line:
+`rspec spec.rb`
+
