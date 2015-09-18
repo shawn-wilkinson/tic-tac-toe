@@ -138,6 +138,9 @@ class Game
     if @most_recent_move
       @view.computer_move_message(@most_recent_move)
     end
+    if @type = "computer vs computer"
+      @view.dot_dot_dot
+    end
     if player.type == "human"
       get_human_spot(player)
     else

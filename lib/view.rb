@@ -78,6 +78,13 @@ class View
     puts "#{input_hash[:name]} chose spot #{input_hash[:spot]}"
   end
 
+  def self.dot_dot_dot
+    7.times do
+      print "."
+      sleep(0.5)
+    end
+  end
+
   def self.tie_game
     puts "It's a tie!"
   end
