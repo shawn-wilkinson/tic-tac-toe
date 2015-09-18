@@ -1,6 +1,5 @@
+$TEST_ENVIRONMENT = true
 require_relative "game.rb"
-
-#NOTE: Runner code at the bottom of 'game.rb' must be commented out in order to properly run below tests
 
 describe "Board" do
   let (:test_board) {Board.new}
@@ -84,11 +83,6 @@ describe "Player" do
   end
 
   describe "#determine_computer_move" do
-    it "will select center spot ('4') when it is available" do
-      board = Board.new
-      board.spaces = ['X','1','O','X','4','O','X','7','O']
-      expect(test_player.determine_computer_move({board:board, opponent_marker:'O'})).to eq(4)
-    end
     it "will select spots that make it win" do
       test_player.marker = 'X'
       board = Board.new
@@ -100,14 +94,6 @@ describe "Player" do
       board = Board.new
       board.spaces = ['X','O','X','3','O','5','6','7','8']
       expect(test_player.determine_computer_move({board:board, opponent_marker:'O'})).to eq('7')
-    end
-    it "will select a random corner if middle is taken and there is no possibility of player or opponent winning on current turn" do
-      test_player.marker = 'X'
-      board = Board.new
-      board.spaces = ['X','1','2','3','O','5','6','7','8']
-      move = test_player.determine_computer_move({board:board, opponent_marker:'O'})
-      corners = ['2','6','8']
-      expect(corners.include?(move)).to be true
     end
   end
 
