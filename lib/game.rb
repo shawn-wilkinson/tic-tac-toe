@@ -46,7 +46,7 @@ class Game
 
   def select_markers
     @playera.marker = get_unique_marker(@playera.name)
-    @playerb.marker = get_unique_marker(@playerb.name)
+    @playerb.marker = get_unique_marker(@playerb.name,@playera.marker)
   end
 
   def establish_game_type
@@ -102,12 +102,12 @@ class Game
     end
   end
 
-  def get_unique_marker(name)
+  def get_unique_marker(name,taken_marker=nil)
     digits = ["0","1","2","3","4","5","6","7","8","9"]
     @view.select_marker_message(name)
     while true
       input = gets.chomp
-      if (input.length == 1) && (input != @player1.marker) && (input != @player2.marker) && (!digits.include?(input))
+      if (input.length == 1) && (!digits.include?(input)) && (input != taken_marker)
         return input
       else
         @view.invalid_marker_selection_message
