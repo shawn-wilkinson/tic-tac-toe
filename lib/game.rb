@@ -4,10 +4,16 @@ require_relative "board.rb"
 
 
 class Game
+
+  attr_accessor :type
+
   def initialize
     @board = Board.new
+    @playera = Player.new
+    @playerb = Player.new
     @player1 = Player.new
     @player2 = Player.new
+    @type = nil
     @view = View
     @most_recent_computer_move = nil
   end
@@ -19,18 +25,63 @@ class Game
   end
 
   def set_up_game
+    establish_game_type
     enter_player_names
     select_markers
+    determine_game_order
   end
 
   def enter_player_names
-    @player1.name = @view.get_player_name
-    @player2.name = @view.get_computer_name
+    @playera.name = @view.get_player_name
+    @playerb.name = @view.get_player_name
   end
 
   def select_markers
-    @player1.marker = get_unique_marker(@player1.name)
-    @player2.marker = get_unique_marker(@player2.name)
+    @playera.marker = get_unique_marker(@playera.name)
+    @playerb.marker = get_unique_marker(@playerb.name)
+  end
+
+  def establish_game_type
+    set_game_type
+    set_player_types
+  end
+
+  def set_game_type
+    until @type
+      @view.select_game_type_message
+      input = gets.chomp
+      if input == '1'
+        @type = "human vs computer"
+        @view.game_type_message(@type)
+      elsif input == '2'
+        @type = "human vs human"
+        @view.game_type_message(@type)
+      elsif input == '3'
+        @type = "computer vs computer"
+        @view.game_type_message(@type)
+      else
+        @view.invalid_game_type_message
+      end
+    end
+  end
+
+  def set_player_types
+    if @type == "human vs computer"
+      @playera.type = "human"
+      @playerb.type = "computer"
+    elsif @type == "human vs human"
+      @playera.type = "human"
+      @playerb.type = "human"
+    else
+      @playera.type = "computer"
+      @playerb.type = "computer"
+    end
+  end
+
+  def determine_game_order
+    @player1 = @playera
+    @player2 = @playerb
+
   end
 
   def get_unique_marker(name)

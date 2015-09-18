@@ -11,6 +11,22 @@ def available_spaces
   @spaces.dup.delete_if{|space| !@orig_spaces.include?(space)}
 end
 
+def spaces_left
+  self.available_spaces.length
+end
+
+def center
+  @spaces[4]
+end
+
+def corners
+  [@spaces[0],@spaces[2],@spaces[6],@spaces[8]]
+end
+
+def sides
+  [@spaces[1],@spaces[3],@spaces[5],@spaces[7]]
+end
+
 def return_random_corner
   available_spaces.select{|space| space.to_i % 2 == 0 && space.to_i != 4}.sample
 end

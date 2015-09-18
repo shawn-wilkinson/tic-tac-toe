@@ -32,6 +32,22 @@ class View
     return name.concat(" (Computer)")
   end
 
+  def self.select_game_type_message
+    puts "Please select the type of game you would like to play:"
+    puts "1. Human vs Computer"
+    puts "2. Human vs Human"
+    puts "3. Computer vs Computer"
+    puts "Please enter 1,2 or 3 as your choice."
+  end
+
+  def self.game_type_message(type)
+    puts "Game is set as #{type}!"
+  end
+
+  def self.invalid_game_type_message
+    puts "Invalid Entry. Please enter '1' '2' or '3'."
+  end
+
    def self.display_board(board)
       puts "|_#{board[0]}_|_#{board[1]}_|_#{board[2]}_|\n|_#{board[3]}_|_#{board[4]}_|_#{board[5]}_|\n|_#{board[6]}_|_#{board[7]}_|_#{board[8]}_|\n"
   end
