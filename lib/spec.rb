@@ -1,4 +1,3 @@
-$TEST_ENVIRONMENT = true
 require_relative "game.rb"
 
 describe "Board" do

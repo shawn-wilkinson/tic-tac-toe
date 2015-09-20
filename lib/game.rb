@@ -124,8 +124,7 @@ class Game
 
   def play_round
     get_player_move({player:@player1,opponent_marker:@player2.marker})
-    if @board.game_is_over? || @board.tie?
-    else
+    unless @board.game_is_over? || @board.tie?
       get_player_move({player:@player2,opponent_marker:@player1.marker})
     end
   end
@@ -185,7 +184,3 @@ class Game
 
 end
 
-unless $TEST_ENVIRONMENT
-  game = Game.new
-  game.start_game
-end
