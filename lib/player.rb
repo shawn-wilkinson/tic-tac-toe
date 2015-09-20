@@ -43,14 +43,50 @@ class Player
         return 4
       end
     else
-      if (spaces[0] == opponent_marker && spaces[8] == opponent_marker) || (spaces[2] == opponent_marker && spaces[6] == opponent_marker)
-        return 1
-      elsif spaces[4] == '4'
+      if opposite_corners(opponent_marker,board)
+        return opposite_corners(opponent_marker,board)
+      elsif corner_and_opposite_side(opponent_marker,board)
+        return corner_and_opposite_side(opponent_marker,board)
+      elsif board.center == '4'
         return 4
       else
         return board.return_random_corner
       end
     end
+  end
+
+  def opposite_corners(opponent_marker,board)
+    spaces = board.spaces
+    result = false
+    if (spaces[0] == opponent_marker && spaces[8] == opponent_marker) || (spaces[2] == opponent_marker && spaces[6] == opponent_marker)
+        result = 1
+    end
+    return result
+  end
+
+  def corner_and_opposite_side(opponent_marker,board)
+    spaces = board.spaces
+    result = false
+    if board.corners.grep(opponent_marker).count == 1 && board.sides.grep(opponent_marker).count == 1
+        if spaces[0] == opponent_marker
+          if spaces[5] == opponent_marker || spaces[7] == opponent_marker
+            result = 8
+          end
+        elsif spaces[2] == opponent_marker
+          if spaces[3] == opponent_marker || spaces[7] == opponent_marker
+            result = 6
+          end
+        elsif spaces[6] == opponent_marker
+          if spaces[1] == opponent_marker || spaces[5] == opponent_marker
+            result = 2
+          end
+        else
+          if spaces[1] == opponent_marker || spaces[3] == opponent_marker
+            result = 0
+          end
+        end
+      end
+      return result
   end
 
   def identify_crucial_space(input_hash)
