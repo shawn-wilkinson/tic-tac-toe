@@ -1,7 +1,7 @@
 require_relative "playerview.rb"
 
 class Player
-  attr_accessor :marker, :name, :type, :player_markers
+  attr_accessor :marker, :name, :type
 
   @@player_markers = []
 
@@ -10,6 +10,10 @@ class Player
     @name = ""
     @type = nil
     @view = PlayerView
+  end
+
+  def self.player_markers=(markers)
+    @@player_markers = markers
   end
 
   def set_name
