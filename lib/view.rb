@@ -69,10 +69,10 @@ class View
     puts "Please make another selection."
   end
 
-  def self.pick_spot_message(input_hash)
-    puts "#{input_hash[:player_name]}, pick a spot."
-    puts "Choose from: #{input_hash[:choices].join(',')}"
-  end
+  # def self.pick_spot_message(input_hash)
+  #   puts "#{input_hash[:player_name]}, pick a spot."
+  #   puts "Choose from: #{input_hash[:choices].join(',')}"
+  # end
 
   def self.computer_move_message(input_hash)
     puts "#{input_hash[:name]} chose spot #{input_hash[:spot]}"
@@ -83,6 +83,7 @@ class View
       print "."
       sleep(0.5)
     end
+    puts
   end
 
   def self.tie_game

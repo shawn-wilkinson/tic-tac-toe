@@ -9,6 +9,7 @@ class Game
 
   def initialize
     @board = Board.new
+    @players = []
     @playera = Player.new
     @playerb = Player.new
     @player1 = nil
@@ -45,8 +46,8 @@ class Game
   end
 
   def select_markers
-    @playera.marker = get_unique_marker(@playera.name)
-    @playerb.marker = get_unique_marker(@playerb.name,@playera.marker)
+    @playera.set_marker(get_unique_marker(@playera.name))
+    @playerb.set_marker(get_unique_marker(@playerb.name,@playera.marker))
   end
 
   def establish_game_type
@@ -94,11 +95,9 @@ class Game
       @view.invalid_first_player_message
     end
     if order_preference == '1'
-      @player1 = @playera
-      @player2 = @playerb
+      @players = [@playera,@playerb]
     else
-      @player1 = @playerb
-      @player2 = @playera
+      @players = [@playerb,@playera]
     end
   end
 
@@ -123,15 +122,14 @@ class Game
   end
 
   def play_round
-    get_player_move({player:@player1,opponent_marker:@player2.marker})
-    unless @board.game_is_over? || @board.tie?
-      get_player_move({player:@player2,opponent_marker:@player1.marker})
-    end
+    round_visuals
+    move = @players.first.get_move(@board)
+    @most_recent_move = ({name:@players.first.name,spot:move})
+    @board.mark_space({spot_number:move,player_marker: @players.first.marker})
+    @players.reverse!
   end
 
-  def get_player_move(input_hash)
-    player = input_hash[:player]
-    opponent_marker = input_hash[:opponent_marker]
+  def round_visuals
     @view.clear_screen
     @view.display_board(@board.spaces)
     if @most_recent_move
@@ -140,42 +138,14 @@ class Game
     if @type == "computer vs computer"
       @view.dot_dot_dot
     end
-    if player.type == "human"
-      get_human_spot(player)
-    else
-      computer_spot_choice = player.determine_computer_move({opponent_marker: opponent_marker,board:@board})
-      @most_recent_move = ({name:player.name,spot:computer_spot_choice})
-      set_computer_spot({spot_number:computer_spot_choice,player_marker:player.marker})
-    end
-
-  end
-
-  def set_computer_spot(input_hash)
-    @board.mark_space({spot_number:input_hash[:spot_number], player_marker:input_hash[:player_marker]})
-  end
-
-  def get_human_spot(player)
-    choices = @board.available_spaces
-    @view.pick_spot_message({player_name:player.name, choices:choices})
-    valid_selection = false
-    while valid_selection == false
-      selection = gets.chomp
-      if choices.include?(selection)
-        @board.mark_space({spot_number:selection,player_marker: player.marker})
-        valid_selection = true
-      else
-        @view.pick_spot_message({player_name:player.name, choices:choices})
-      end
-    end
-    @most_recent_move = ({name:player.name,spot:selection})
   end
 
   def evaluate_game_result
     @view.clear_screen
-    if @board.won_game?(@player1.marker)
-      @view.won_game(@player1.name)
-    elsif @board.won_game?(@player2.marker)
-      @view.won_game(@player2.name)
+    if @board.won_game?(@playera.marker)
+      @view.won_game(@playera.name)
+    elsif @board.won_game?(@playerb.marker)
+      @view.won_game(@playerb.name)
     else
       @view.tie_game
     end

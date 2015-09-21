@@ -1,29 +1,65 @@
+require_relative "playerview.rb"
+
 class Player
-  attr_accessor :marker, :name, :type
+  attr_accessor :marker, :name, :type, :player_markers
+
+  @@player_markers = []
 
   def initialize
     @marker = ""
     @name = ""
     @type = nil
+    @view = PlayerView
   end
 
-  def determine_computer_move(input_hash)
-    opponent_marker = input_hash[:opponent_marker]
-    board = input_hash[:board]
-    if board.spaces_left > 7
-      return determine_first_move(board,opponent_marker)
-    elsif block_or_win(board,opponent_marker)
-      return block_or_win(board,opponent_marker)
-    elsif board.spaces_left > 5
-      return determine_second_move(board,opponent_marker)
-    elsif board.spaces_left > 3
-      return determine_third_move(board,opponent_marker)
+  def set_marker(marker)
+    @marker = marker
+    @@player_markers << marker
+  end
+
+  def opponent_marker
+    @@player_markers.select{|element| element != @marker}[0]
+  end
+
+  def get_move(board)
+    if @type == 'human'
+      return determine_human_move(board)
     else
-      return board.select_random_space
+      return determine_computer_move(board)
     end
   end
 
-  def determine_first_move(board,opponent_marker)
+  def determine_human_move(board)
+    choices = board.available_spaces
+    @view.pick_spot_message(@name,choices)
+    valid_selection = false
+    while valid_selection == false
+      selection = gets.chomp
+      if choices.include?(selection)
+        valid_selection = true
+      else
+        @view.pick_spot_message(@name,choices)
+      end
+    end
+    return selection
+  end
+
+
+  def determine_computer_move(board)
+    if board.spaces_left > 7
+      return determine_first_move(board)
+    elsif block_or_win(board)
+      return block_or_win(board)
+    elsif board.spaces_left > 5
+      return determine_second_move(board)
+    elsif board.spaces_left > 3
+      return determine_third_move(board)
+    else
+      return board.return_random_space
+    end
+  end
+
+  def determine_first_move(board)
     spaces = board.spaces
     if board.spaces_left == 9
       return 0
@@ -33,19 +69,19 @@ class Player
     end
   end
 
-  def determine_second_move(board,opponent_marker)
+  def determine_second_move(board)
     spaces = board.spaces
     if board.spaces_left == 7
-      if response_to_side(board,opponent_marker)
-        return response_to_side(board,opponent_marker)
+      if response_to_side(board)
+        return response_to_side(board)
       end
       return 4 if board.center == '4'
       return 8
     else
-      if response_to_opposite_corners(board,opponent_marker)
-        return response_to_opposite_corners(board,opponent_marker)
-      elsif response_to_corner_and_opposite_side(board,opponent_marker)
-        return response_to_corner_and_opposite_side(board,opponent_marker)
+      if response_to_opposite_corners(board)
+        return response_to_opposite_corners(board)
+      elsif response_to_corner_and_opposite_side(board)
+        return response_to_corner_and_opposite_side(board)
       elsif board.center == '4'
         return 4
       else
@@ -54,13 +90,13 @@ class Player
     end
   end
 
-  def determine_third_move(board,opponent_marker)
+  def determine_third_move(board)
     return 4 if board.center == '4'
-    return board.select_random_corner if board.select_random_corner
-    return board.select_random_space
+    return board.return_random_corner if board.return_random_corner
+    return board.return_random_space
   end
 
-  def response_to_side(board,opponent_marker)
+  def response_to_side(board)
     if board.sides.include?(opponent_marker) && board.sides.include?('1')
       return 2
     elsif board.sides.include?(opponent_marker)
@@ -70,7 +106,7 @@ class Player
     end
   end
 
-  def response_to_opposite_corners(board,opponent_marker)
+  def response_to_opposite_corners(board)
     spaces = board.spaces
     if (spaces[0] == opponent_marker && spaces[8] == opponent_marker) || (spaces[2] == opponent_marker && spaces[6] == opponent_marker)
       return 1
@@ -79,7 +115,7 @@ class Player
     end
   end
 
-  def response_to_corner_and_opposite_side(board,opponent_marker)
+  def response_to_corner_and_opposite_side(board)
     spaces = board.spaces
     result = false
     if board.corners.grep(opponent_marker).count == 1 && board.sides.grep(opponent_marker).count == 1
@@ -104,7 +140,7 @@ class Player
       return result
   end
 
-  def block_or_win(board,opponent_marker)
+  def block_or_win(board)
     result = false
     #first, determine if any move could win current player the game
     board.available_spaces.each do |space|
