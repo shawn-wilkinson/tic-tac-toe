@@ -11,8 +11,8 @@ class Game
     @board = Board.new
     @playera = Player.new
     @playerb = Player.new
-    @player1 = Player.new
-    @player2 = Player.new
+    @player1 = nil
+    @player2 =  nil
     @type = nil
     @view = View
     @most_recent__move = nil

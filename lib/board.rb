@@ -31,6 +31,10 @@ def return_random_corner
   available_spaces.select{|space| space.to_i % 2 == 0 && space.to_i != 4}.sample
 end
 
+def return_random_space
+  available_spaces.sample
+end
+
 def mark_space(input_hash)
   @spaces[input_hash[:spot_number].to_i] = input_hash[:player_marker]
 end

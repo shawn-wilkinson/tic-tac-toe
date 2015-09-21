@@ -19,7 +19,7 @@ class Player
     elsif board.spaces_left > 3
       return determine_third_move(board,opponent_marker)
     else
-      return select_random_space(board)
+      return board.select_random_space
     end
   end
 
@@ -56,7 +56,8 @@ class Player
 
   def determine_third_move(board,opponent_marker)
     return 4 if board.center == '4'
-    return false
+    return board.select_random_corner if board.select_random_corner
+    return board.select_random_space
   end
 
   def response_to_side(board,opponent_marker)
@@ -71,11 +72,11 @@ class Player
 
   def response_to_opposite_corners(board,opponent_marker)
     spaces = board.spaces
-    result = false
     if (spaces[0] == opponent_marker && spaces[8] == opponent_marker) || (spaces[2] == opponent_marker && spaces[6] == opponent_marker)
-        result = 1
+      return 1
+    else
+      return false
     end
-    return result
   end
 
   def response_to_corner_and_opposite_side(board,opponent_marker)
@@ -120,14 +121,6 @@ class Player
       end
     end
     return result
-  end
-
-  def select_random_space(board)
-    if board.return_random_corner
-      return board.return_random_corner
-    else
-      return  board.available_spaces.sample
-    end
   end
 
 end
