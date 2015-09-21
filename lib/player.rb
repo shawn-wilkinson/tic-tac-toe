@@ -11,42 +11,41 @@ class Player
     opponent_marker = input_hash[:opponent_marker]
     board = input_hash[:board]
     if board.spaces_left > 7
-      return determine_first_move({board:board, opponent_marker: opponent_marker})
-    elsif identify_crucial_space({board:board, opponent_marker: opponent_marker})
-      return identify_crucial_space({board:board, opponent_marker: opponent_marker})
+      return determine_first_move(board,opponent_marker)
+    elsif block_or_win(board,opponent_marker)
+      return block_or_win(board,opponent_marker)
     elsif board.spaces_left > 5
-      return determine_second_move({board:board, opponent_marker: opponent_marker})
+      return determine_second_move(board,opponent_marker)
+    elsif board.spaces_left > 3
+      return determine_third_move(board,opponent_marker)
     else
-      return select_space(board)
+      return select_random_space(board)
     end
   end
 
-  def determine_first_move(input_hash)
-    board = input_hash[:board]
+  def determine_first_move(board,opponent_marker)
     spaces = board.spaces
-    opponent_marker = input_hash[:opponent_marker]
-    if board.spaces_left == 9 || board.center == opponent_marker
+    if board.spaces_left == 9
       return 0
     else
+      return 0 if board.center == opponent_marker
       return 4
     end
   end
 
-  def determine_second_move(input_hash)
-    board = input_hash[:board]
+  def determine_second_move(board,opponent_marker)
     spaces = board.spaces
-    opponent_marker = input_hash[:opponent_marker]
     if board.spaces_left == 7
-      if spaces[8] == '8'
-        return 8
-      else
-        return 4
+      if response_to_side(board,opponent_marker)
+        return response_to_side(board,opponent_marker)
       end
+      return 4 if board.center == '4'
+      return 8
     else
-      if opposite_corners(opponent_marker,board)
-        return opposite_corners(opponent_marker,board)
-      elsif corner_and_opposite_side(opponent_marker,board)
-        return corner_and_opposite_side(opponent_marker,board)
+      if response_to_opposite_corners(board,opponent_marker)
+        return response_to_opposite_corners(board,opponent_marker)
+      elsif response_to_corner_and_opposite_side(board,opponent_marker)
+        return response_to_corner_and_opposite_side(board,opponent_marker)
       elsif board.center == '4'
         return 4
       else
@@ -55,7 +54,22 @@ class Player
     end
   end
 
-  def opposite_corners(opponent_marker,board)
+  def determine_third_move(board,opponent_marker)
+    return 4 if board.center == '4'
+    return false
+  end
+
+  def response_to_side(board,opponent_marker)
+    if board.sides.include?(opponent_marker) && board.sides.include?('1')
+      return 2
+    elsif board.sides.include?(opponent_marker)
+      return 6
+    else
+      return false
+    end
+  end
+
+  def response_to_opposite_corners(board,opponent_marker)
     spaces = board.spaces
     result = false
     if (spaces[0] == opponent_marker && spaces[8] == opponent_marker) || (spaces[2] == opponent_marker && spaces[6] == opponent_marker)
@@ -64,7 +78,7 @@ class Player
     return result
   end
 
-  def corner_and_opposite_side(opponent_marker,board)
+  def response_to_corner_and_opposite_side(board,opponent_marker)
     spaces = board.spaces
     result = false
     if board.corners.grep(opponent_marker).count == 1 && board.sides.grep(opponent_marker).count == 1
@@ -89,10 +103,8 @@ class Player
       return result
   end
 
-  def identify_crucial_space(input_hash)
+  def block_or_win(board,opponent_marker)
     result = false
-    board = input_hash[:board]
-    opponent_marker = input_hash[:opponent_marker]
     #first, determine if any move could win current player the game
     board.available_spaces.each do |space|
       if board.winning_move?({spot_number:space,player_marker:@marker})
@@ -110,7 +122,7 @@ class Player
     return result
   end
 
-  def select_space(board)
+  def select_random_space(board)
     if board.return_random_corner
       return board.return_random_corner
     else
