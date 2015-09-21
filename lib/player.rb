@@ -12,8 +12,29 @@ class Player
     @view = PlayerView
   end
 
-  def set_marker(marker)
-    @marker = marker
+  def set_name
+    if @type == "human"
+      @name= @view.get_player_name
+    else
+      @name = @view.get_computer_name
+    end
+  end
+
+  def get_unique_marker
+    digits = ["0","1","2","3","4","5","6","7","8","9"]
+    @view.select_marker_message(@name)
+    while true
+      input = gets.chomp
+      if (input.length == 1) && (!digits.include?(input)) && (!@@player_markers.include?(input))
+        return input
+      else
+        @view.invalid_marker_selection_message
+      end
+    end
+  end
+
+  def set_marker
+    @marker = get_unique_marker
     @@player_markers << marker
   end
 

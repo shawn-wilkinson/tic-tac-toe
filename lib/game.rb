@@ -1,7 +1,6 @@
 require_relative "player.rb"
-require_relative "view.rb"
+require_relative "gameview.rb"
 require_relative "board.rb"
-
 
 class Game
 
@@ -12,10 +11,8 @@ class Game
     @players = []
     @playera = Player.new
     @playerb = Player.new
-    @player1 = nil
-    @player2 =  nil
     @type = nil
-    @view = View
+    @view = GameView
     @most_recent__move = nil
   end
 
@@ -33,21 +30,13 @@ class Game
   end
 
   def enter_player_names
-    if @playera.type == "human"
-      @playera.name = @view.get_player_name
-    else
-      @playera.name = @view.get_computer_name
-    end
-    if @playerb.type == "human"
-      @playerb.name = @view.get_player_name
-    else
-      @playerb.name = @view.get_computer_name
-    end
+    @playera.set_name
+    @playerb.set_name
   end
 
   def select_markers
-    @playera.set_marker(get_unique_marker(@playera.name))
-    @playerb.set_marker(get_unique_marker(@playerb.name,@playera.marker))
+    @playera.set_marker
+    @playerb.set_marker
   end
 
   def establish_game_type
@@ -101,19 +90,6 @@ class Game
     end
   end
 
-  def get_unique_marker(name,taken_marker=nil)
-    digits = ["0","1","2","3","4","5","6","7","8","9"]
-    @view.select_marker_message(name)
-    while true
-      input = gets.chomp
-      if (input.length == 1) && (!digits.include?(input)) && (input != taken_marker)
-        return input
-      else
-        @view.invalid_marker_selection_message
-      end
-    end
-  end
-
   def play_game
     until @board.game_is_over? || @board.tie?
       play_round
@@ -133,7 +109,7 @@ class Game
     @view.clear_screen
     @view.display_board(@board.spaces)
     if @most_recent_move
-      @view.computer_move_message(@most_recent_move)
+      @view.recent_move_message(@most_recent_move)
     end
     if @type == "computer vs computer"
       @view.dot_dot_dot
