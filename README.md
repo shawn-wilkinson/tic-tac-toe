@@ -3,7 +3,7 @@
 ###How To Play:
 
 #### 1. Start the game by running the following code in the command line:
-  `ruby game.rb`
+  `ruby runner.rb`
 
 #### 2. Select the game type
 You will be prompted to select what type of game you would like to play. You should enter '1' for a human vs. computer game, '2' for a human vs. human game and '3' for a computer vs computer game.
@@ -22,7 +22,9 @@ During game play you will be provided with an image of the updated board, a mess
 
 ###Have Fun!
 
+
+
 #####Interested in running tests?
 Type the following in the command line:
-`rspec spec.rb`
+`rspec spec_suite.rb`
 
